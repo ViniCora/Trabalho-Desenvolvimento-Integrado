@@ -1,0 +1,41 @@
+g - Vetor de sinal
+H - Matriz de modelo
+f - Imagem
+S - Número de amostras do sinal
+N - Número de elementos sensores
+
+
+Algoritmo 1: CGNE (Conjugate Gradient Method Normal Error)
+Algoritmo 1: CGNR (Conjugate Gradient Normal Residual) (Saad2003, p. 266)
+
+
+Requisitos não funcionais e restrições.
+
+Cada imagem deverá conter no mínimo os seguintes dados:
+Identificação do usuário;
+Identificação do algoritmo utilizado
+Data e hora do início da reconstrução;
+Data e hora do término da reconstrução;
+Tamanho em pixels;
+O número de iterações executadas.
+
+________________________________________________________________________
+
+Cliente.
+
+Implementar uma aplicação cliente com as seguintes características:
+Enviar uma sequência de sinais em intervalos de tempo aleatórios;
+O usuário, o ganho de sinal e o modelo da imagem deverão ser definidos aleatoriamente;
+Gerar um relatório com todas as imagens reconstruídas com as seguintes informações: imagem gerada, usuário, número de iterações e tempo de reconstrução;
+Gerar um relatório de desempenho do servidor, com as informações de consumo de memória e de ocupação de CPU num determinado intervalo de tempo;
+
+________________________________________________________________________
+
+Servidor.
+
+Implementar um servidor para reconstrução de imagens:
+Receber os dados para reconstrução;
+Carregar o modelo de reconstrução de acordo com os parâmetros recebidos;
+Executar o algoritmo de reconstrução;
+Executar até que o erro (ϵ) seja menor do que 1e10-4 .
+Salvar o resultado.
