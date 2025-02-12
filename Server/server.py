@@ -1,3 +1,4 @@
+import csv
 import os
 import json
 import time
@@ -17,6 +18,7 @@ PROCESS_FOLDER = '../Server/relatorios/processos'
 ALGORITMO_CGNR = "CGNR"
 ALGORITMO_CGNE = "CGNE"
 FILA_PATH = "../Server/fila.txt"
+CSV_PATH = "../Server/relatorios/statusServidor/statusServidor.csv"
 
 ##__________________________________________________ Variáveis especificadas no problema
 
@@ -274,11 +276,45 @@ def processar_imagem(id_processo):
     decrementa_threads_atuais()
 
 
+def obter_medias():
+    try:
+        with open(CSV_PATH, "r") as file:
+            reader = csv.reader(file, delimiter=';')
+            linhas = list(reader)
+
+            if len(linhas) < 11:
+                return None 
+
+            ultimas_10 = linhas[-10:]
+
+            cpu_values = [float(row[1]) for row in ultimas_10]
+            ram_porcent_values = [float(row[2]) for row in ultimas_10]
+            ram_gb_values = [float(row[3]) for row in ultimas_10]
+
+            media_cpu = sum(cpu_values) / len(cpu_values)
+            media_ram_porcent = sum(ram_porcent_values) / len(ram_porcent_values)
+            media_ram_gb = sum(ram_gb_values) / len(ram_gb_values)
+
+            return media_cpu, media_ram_porcent, media_ram_gb
+    except Exception as e:
+        print(f"Erro ao ler CSV: {e}")
+        return None
+
+
 ##______________________________ Monitorar fila
 
 def monitorar_fila():
     while True:
         print("Threads atuais: ", THREADS_ATUAIS)
+        medias = obter_medias()
+        if medias:
+            media_cpu, media_ram_porcent, media_ram_gb = medias
+            print(f"Média CPU: {media_cpu:.2f}% | Média RAM: {media_ram_porcent:.2f}% | RAM GB: {media_ram_gb:.2f}")
+
+            if media_cpu > 75 or media_ram_porcent > 75:
+                print("Uso elevado de CPU/RAM! Bloqueando fila...")
+                time.sleep(5)
+                continue
         if THREADS_ATUAIS < MAX_THREADS:
             with open(f"{FILA_PATH}", "r+") as f:
                 lines = f.readlines()
